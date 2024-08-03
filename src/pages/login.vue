@@ -56,6 +56,7 @@ function getProfile() {
   </div>
   <div v-else>
     <pre>{{ authStore.token }}</pre>
+    <pre>{{ authStore.user }}</pre>
     <button @click="logout">
       Logout
     </button>
