@@ -1,6 +1,13 @@
 <script setup>
-defineOptions({
-  name: 'IndexPage',
+import { onMounted, ref } from 'vue'
+import apiClient from '~/composables/useApi'
+import { useAuthStore } from '~/stores/auth'
+
+const users = ref([])
+const authStore = useAuthStore()
+
+onMounted(async () => {
+  users.value = await apiClient.get('/users').then(r => r.data)
 })
 </script>
 
@@ -14,11 +21,7 @@ defineOptions({
         <h1 class="text-2xl text-gray9 font-semibold md-text-4xl sm-text-3xl dark-text-white">
           We help drive your business forward faster
         </h1>
-        <p>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Minus, saepe aliquid autem alias vero
-          distinctio dignissimos consequatur? Excepturi quibusdam, quam ipsum hic, laudantium ducimus suscipit,
-          culpa facere consequuntur repellat delectus.
-        </p>
+        <pre>{{ authStore.token }}</pre>
         <div class="grid gap6 sm-grid-cols-2">
           <div class="border border-gray1 rd-xl bg-white p4 space-y-6 dark-border-gray9 dark-bg-gray-950">
             <span class="w-max flex rd-full bg-gray-9 p3 text-gray1 dark-bg-gray1 dark-text-gray9">

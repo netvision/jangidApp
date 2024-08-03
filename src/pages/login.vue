@@ -1,7 +1,6 @@
 <!-- eslint-disable no-console -->
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
 import { useAuthStore } from '~/stores/auth'
 
 const username = ref('')
@@ -30,17 +29,7 @@ async function logout() {
 }
 
 function getProfile() {
-  if (authStore.token) {
-    axios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem('token')}`
-    // Or set it per request
-    axios.get('https://api.netvisionindia.com/user/profile')
-      .then((response) => {
-        console.log(response.data)
-      })
-      .catch((error) => {
-        console.error('Error:', error.response)
-      })
-  }
+  authStore.getProfile()
 }
 </script>
 

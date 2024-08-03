@@ -2,7 +2,6 @@ import axios from 'axios'
 
 const defaultOptions = {
   baseURL: 'https://api.netvisionindia.com',
-  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
