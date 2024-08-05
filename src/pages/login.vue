@@ -34,7 +34,7 @@ function getProfile() {
 </script>
 
 <template>
-  <div v-if="!authStore.token">
+  <div v-if="!authStore.accessToken">
     <form @submit.prevent="login">
       <input v-model="username" placeholder="Username">
       <input v-model="password" type="password" placeholder="Password">
@@ -44,7 +44,7 @@ function getProfile() {
     </form>
   </div>
   <div v-else>
-    <pre>{{ authStore.token }}</pre>
+    <pre>{{ authStore.accessToken }}</pre>
     <pre>{{ authStore.user }}</pre>
     <button @click="logout">
       Logout

@@ -3,7 +3,8 @@ import apiClient from '../composables/useApi'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('token') || '',
+    accessToken: localStorage.getItem('accessToken') || '',
+    refreshToken: localStorage.getItem('refreshToken') || '',
     user: null,
   }),
   actions: {
@@ -12,9 +13,11 @@ export const useAuthStore = defineStore('auth', {
         const response = await apiClient.post('/auth/login', credentials)
 
         // console.log(response.data.data.token)
-        this.token = response.data.token
-        localStorage.setItem('token', this.token)
-        await this.getProfile()
+        this.accessToken = response.data.accessToken
+        this.refreshToken = response.data.refreshToken
+        localStorage.setItem('accessToken', this.accessToken)
+        localStorage.setItem('refreshToken', this.refreshToken)
+        // await this.getProfile()
       }
       catch (error) {
         console.error('Failed to login:', error)
@@ -31,9 +34,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     logout() {
-      this.token = ''
+      this.accessToken = ''
+      this.refreshToken = ''
       this.user = null
-      localStorage.removeItem('token')
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
     },
   },
   getters: {
