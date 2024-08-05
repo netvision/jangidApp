@@ -7,6 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Admin: typeof import('./src/components/themes/admin.vue')['default']
+    Home: typeof import('./src/components/themes/home.vue')['default']
+    Jangidapp: typeof import('./src/components/themes/jangidapp.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TheCounter: typeof import('./src/components/TheCounter.vue')['default']
