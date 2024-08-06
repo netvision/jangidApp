@@ -62,7 +62,7 @@ devDependencies:
     specifier: ^15.2.2
     version: 15.2.7
   pnpm:
-    specifier: ^9.0.2
+    specifier: ^9.6.0
     version: 9.6.0
   simple-git-hooks:
     specifier: ^2.11.1
