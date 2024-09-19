@@ -17,6 +17,7 @@
     "@vueuse/core": "^10.9.0",
     "axios": "^1.7.2",
     "pinia": "^2.2.0",
+    "resend": "^4.0.0",
     "vue": "^3.4.23",
     "vue-router": "^4.3.2"
   },
@@ -30,6 +31,7 @@
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue-macros/volar": "^0.18.18",
     "@vue/test-utils": "^2.4.5",
+    "daisyui": "^4.12.10",
     "eslint": "^9.0.0",
     "eslint-plugin-format": "^0.1.1",
     "jsdom": "^24.0.0",

@@ -66,6 +66,6 @@ export default defineConfig({
     environment: 'jsdom',
   },
   server: {
-    host: 'jangid.local',
+    host: 'localhost',
   },
 })

@@ -1,9 +1,39 @@
+<!-- eslint-disable no-alert -->
+<!-- eslint-disable no-console -->
 <script setup>
 import apiClient from '~/composables/useApi'
+import { useAuthStore } from '~/stores/auth'
 
 const theme = shallowRef(null)
 const page = ref()
+const pages = ref([])
+const authStore = useAuthStore()
+const user = ref({})
+const formLogin = ref(true)
+
+async function checkEmail() {
+  console.log(user.value.email)
+}
+
+async function register(e) {
+  e.preventDefault()
+  const res = await apiClient.post('auth/register', user.value)
+  console.log(res.status)
+}
+
+async function login(e) {
+  e.preventDefault()
+  await authStore.login(user.value)
+  await authStore.getProfile()
+  user.value = authStore.user
+  pages.value = await apiClient.get(`pages?filter[user_id][eq]=${user.value.id}&expand=theme`).then(r => r.data)
+}
+
 onMounted(async () => {
+  if (authStore.accessToken) {
+    await authStore.getProfile()
+    user.value = authStore.user
+  }
   const sd = window.location.hostname.split('.').length > 2 ? window.location.hostname.split('.')[0] : ''
 
   if (![null, '', 'www'].includes(sd)) {
@@ -13,6 +43,11 @@ onMounted(async () => {
       theme.value = defineAsyncComponent(() => import(`../components/themes/${page.value?.theme?.name}.vue`))
     }
   }
+  if (user.value?.id) {
+    console.log(user.value.id)
+    pages.value = await apiClient.get(`pages?filter[user_id][eq]=${user.value.id}&expand=theme`).then(r => r.data)
+    console.log(pages.value)
+  }
 })
 </script>
 
@@ -20,62 +55,103 @@ onMounted(async () => {
   <div v-if="theme">
     <Component :is="theme" :data="page" />
   </div>
-  <div v-else class="relative h-screen w-full bg-cover bg-center bg-no-repeat" style="background-image: url('background.jpg')">
-    <div class="">
-      <img src="/images/logo.png">
+  <div v-else class="relative h-screen w-full bg-cover bg-center bg-no-repeat">
+    <div class="flex place-content-between">
+      <div class="object-fit h-100px h-auto w-200px">
+        <img src="/images/logo.png">
+      </div>
     </div>
-    <!-- source:https://codepen.io/owaiswiz/pen/jOPvEPB -->
-    <div class="min-h-screen flex justify-center text-gray-900">
-      <div class="m-0 max-w-screen-xl flex flex-1 justify-center sm:m-10 sm:rounded-lg">
-        <div class="p-6 lg:w-1/2 xl:w-5/12 sm:p-12">
-          <div class="mt-12 flex flex-col items-center">
-            <h1 class="text-2xl font-extrabold xl:text-3xl">
-              Sign up
-            </h1>
-            <div class="mt-8 w-full flex-1">
-              <div class="mx-auto max-w-xs">
-                <input
-                  class="w-full border border-gray-200 rounded-lg bg-gray-100 px-8 py-4 text-sm font-medium focus:border-gray-400 focus:bg-white focus:outline-none placeholder-gray-500"
-                  type="email" placeholder="Email"
-                >
-                <input
-                  class="mt-5 w-full border border-gray-200 rounded-lg bg-gray-100 px-8 py-4 text-sm font-medium focus:border-gray-400 focus:bg-white focus:outline-none placeholder-gray-500"
-                  type="password" placeholder="Password"
-                >
-                <button
-                  class="focus:shadow-outline mt-5 w-full flex items-center justify-center rounded-lg bg-indigo-500 py-4 text-gray-100 font-semibold tracking-wide transition-all duration-300 ease-in-out hover:bg-indigo-700 focus:outline-none"
-                >
-                  <svg
-                    class="h-6 w-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round"
-                  >
-                    <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                    <circle cx="8.5" cy="7" r="4" />
-                    <path d="M20 8v6M23 11h-6" />
-                  </svg>
-                  <span class="ml-3">
-                    Sign Up
-                  </span>
+
+    <div class="hero bg-base-200 relative min-h-screen">
+      <div class="absolute right-0 top-0 h-350px w-auto">
+        <img src="/images/jangid-log.png" class="h-350px object-cover">
+      </div>
+      <div class="hero-content flex-col lg:flex-row-reverse">
+        <div class="text-center lg:text-left">
+          <h1 class="text-5xl font-bold">
+            A Creative Community
+          </h1>
+          <p class="py-6">
+            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
+            quasi. In deleniti eaque aut repudiandae et a id nisi.
+          </p>
+        </div>
+        <div class="card bg-base-100 max-w-sm w-full shrink-0 shadow-2xl">
+          <div v-if="!authStore.user" class="card-body">
+            <div v-if="formLogin">
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Username</span>
+                </label>
+                <input v-model="user.username" type="text" placeholder="usetname" class="input input-bordered" required>
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Password</span>
+                </label>
+                <input v-model="user.password" type="password" placeholder="password" class="input input-bordered" required>
+                <label class="label">
+                  <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+                </label>
+              </div>
+              <div class="form-control mt-6 flex">
+                <button class="btn-primary btn" @click="login">
+                  Login
                 </button>
-                <p class="mt-6 text-center text-xs text-gray-600">
-                  I agree to abide by templatana's
-                  <a href="#" class="border-b border-gray-500 border-dotted">
-                    Terms of Service
-                  </a>
-                  and its
-                  <a href="#" class="border-b border-gray-500 border-dotted">
-                    Privacy Policy
-                  </a>
-                </p>
+                <button @click="() => formLogin = !formLogin">
+                  Or Register Now
+                </button>
+              </div>
+            </div>
+            <div v-else>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Username</span>
+                </label>
+                <input v-model="user.username" type="text" placeholder="usetname" class="input input-bordered" required>
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Email Id</span>
+                </label>
+                <input v-model="user.email" type="text" placeholder="email id" class="input input-bordered" required @blur="checkEmail">
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">password</span>
+                </label>
+                <input v-model="user.password" type="password" class="input input-bordered" required>
+              </div>
+              <div class="form-control">
+                <label class="label">
+                  <span class="label-text">Confirm Password</span>
+                </label>
+                <input v-model="user.c_password" type="password" class="input input-bordered" required>
+                <label class="label">
+                  <a href="#" class="label-text-alt link link-hover">Forgot password?</a>
+                </label>
+              </div>
+              <div class="form-control mt-6 flex">
+                <button class="btn-primary btn" @click="register">
+                  Register
+                </button>
+                <button @click="() => formLogin = !formLogin">
+                  Already Registered! Login here
+                </button>
               </div>
             </div>
           </div>
-        </div>
-        <div class="hidden flex-1 text-center lg:flex">
-          <div
-            class="m-0 w-full bg-contain bg-center bg-no-repeat xl:m-16"
-            style="background-image: url('/images/jangid-log.png'); height: 400px"
-          />
+          <div v-else>
+            <div v-if="pages.length > 0">
+              {{ pages[0]?.subdomain }}
+            </div>
+            <div v-else>
+              Add Card
+            </div>
+            <button @click="authStore.logout()">
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </div>
