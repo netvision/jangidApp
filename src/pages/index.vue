@@ -18,7 +18,14 @@ async function checkEmail() {
 async function register(e) {
   e.preventDefault()
   const res = await apiClient.post('auth/register', user.value)
-  console.log(res.status)
+  console.log(res)
+  if (res.data.status !== 'error') {
+    alert('Registered succesfully. Please login!')
+    formLogin.value = !formLogin.value
+  }
+  else {
+    alert('Some error occured! please try again')
+  }
 }
 
 async function login(e) {
@@ -27,6 +34,11 @@ async function login(e) {
   await authStore.getProfile()
   user.value = authStore.user
   pages.value = await apiClient.get(`pages?filter[user_id][eq]=${user.value.id}&expand=theme`).then(r => r.data)
+}
+
+function logout() {
+  authStore.logout()
+  user.value = {}
 }
 
 onMounted(async () => {
@@ -148,7 +160,7 @@ onMounted(async () => {
             <div v-else>
               Add Card
             </div>
-            <button @click="authStore.logout()">
+            <button @click="logout">
               Logout
             </button>
           </div>
