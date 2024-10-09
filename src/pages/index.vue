@@ -10,21 +10,29 @@ const pages = ref([])
 const authStore = useAuthStore()
 const user = ref({})
 const formLogin = ref(true)
-
-async function checkEmail() {
-  console.log(user.value.email)
-}
+const showModal = ref(false)
 
 async function register(e) {
   e.preventDefault()
-  const res = await apiClient.post('auth/register', user.value)
-  console.log(res)
-  if (res.data.status !== 'error') {
-    alert('Registered succesfully. Please login!')
-    formLogin.value = !formLogin.value
+  if (user.value.password !== user.value.c_password) {
+    alert('Passwords doesn\'t match!')
   }
   else {
-    alert('Some error occured! please try again')
+    const res = await apiClient.post('auth/register', user.value)
+    // console.log(res)
+    if (res.data.status === 'success') {
+      alert(res.data.message)
+      formLogin.value = !formLogin.value
+    }
+    else {
+      const errors = res.data.errors
+      if (errors?.username)
+        alert(errors.username[0])
+      else if (errors?.email)
+        alert(errors.email[0])
+      else
+        alert(JSON.stringify(errors))
+    }
   }
 }
 
@@ -126,7 +134,7 @@ onMounted(async () => {
                 <label class="label">
                   <span class="label-text">Email Id</span>
                 </label>
-                <input v-model="user.email" type="text" placeholder="email id" class="input input-bordered" required @blur="checkEmail">
+                <input v-model="user.email" type="text" placeholder="email id" class="input input-bordered" required>
               </div>
               <div class="form-control">
                 <label class="label">
@@ -155,11 +163,17 @@ onMounted(async () => {
           </div>
           <div v-else>
             <div v-if="pages.length > 0">
-              {{ pages[0]?.subdomain }}
+              <Card v-for="p in pages" :key="p.id" :page="p" />
             </div>
             <div v-else>
-              Add Card
+              <button id="show-modal" @click="showModal = true">
+                Add Card
+              </button>
             </div>
+            <Teleport to="body">
+              <!-- use the modal component, pass in the prop -->
+              <CardEditor :show="showModal" @close="showModal = false" />
+            </Teleport>
             <button @click="logout">
               Logout
             </button>

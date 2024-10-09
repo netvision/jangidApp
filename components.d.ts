@@ -7,6 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Card: typeof import('./src/components/Card.vue')['default']
+    CardEditor: typeof import('./src/components/CardEditor.vue')['default']
     Default: typeof import('./src/components/themes/default.vue')['default']
     Home: typeof import('./src/components/themes/home.vue')['default']
     Jangidapp: typeof import('./src/components/themes/jangidapp.vue')['default']

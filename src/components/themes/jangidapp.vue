@@ -4,7 +4,7 @@ const props = defineProps(['data'])
 
 <template>
   <div class="bg-red-200 text-4xl text-indigo-900 font-bold">
-    Jangid Appe<br>
+    Jangid App<br>
     {{ props.data }}
   </div>
 </template>
