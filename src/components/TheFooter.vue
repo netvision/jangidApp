@@ -3,6 +3,6 @@
     <button icon-btn @click="toggleDark()">
       <div i-carbon-sun dark:i-carbon-moon />
     </button>
-    <span class="text-sm">&copy; jangid.co.in</span>
+    <span class="text-sm">&copy; jangid.co.in | 2024</span>
   </nav>
 </template>
